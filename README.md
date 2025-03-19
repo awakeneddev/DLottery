@@ -95,7 +95,5 @@ DLottery aims to solve these problems by providing a transparent, decentralized,
 - Enhance user experience with improved accessibility and navigation.
 - Add staking mechanisms to enhance user engagement.
 
----
 
-Would you like me to help you **start this project on your local machine and build the frontend application** as well? 😊
 
