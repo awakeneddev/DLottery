@@ -1,6 +1,6 @@
 import { Ticket } from "lucide-react";
 import { PrimaryButton, SecondaryButton } from "./components/ui/button/button";
-import { LotteryCard } from "./components/ui/card/LotteryCard";
+import { LotteryCard } from "./components/ui/card/LotteryCard/lotteryCard";
 import { Intro } from "./components/ui/Intro";
 import { LOTTERIES } from "./data";
 
@@ -14,7 +14,7 @@ function App() {
             label="Create Lottery"
             icon={<Ticket className="h-4 w-5 mr-2" />}
           />
-          <PrimaryButton label="Buy Ticket" />{" "}
+          <PrimaryButton label="Connect Wallet" />{" "}
         </div>
 
         {/* Intro Section */}
