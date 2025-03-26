@@ -1,4 +1,5 @@
 # DLottery Documentation
+![image](https://github.com/user-attachments/assets/8f37bab2-dcce-436a-affe-9cea09a67ee8)
 
 ## 📌 Introduction
 DLottery is a decentralized application (dApp) built on the Ethereum blockchain that offers a **Multiple Lottery Scheme System**. Users can participate in various lottery schemes by purchasing tickets for each specific scheme. Each lottery scheme has distinct registration opening and closing dates, as well as a final winner announcement date. This transparent, tamper-proof lottery system uses smart contracts to ensure secure handling of funds and unbiased winner selection.
