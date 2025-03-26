@@ -58,17 +58,13 @@ DLottery aims to solve these problems by providing a transparent, decentralized,
 📁 DLottery
 ├── 📁 contracts
 │   └── 📄 DLottery.sol          # Smart contract for handling multiple lottery schemes
-├── 📁 frontend
+│   └── 📄 hardhat.config.ts     # Configuration file for Hardhat
+├── 📁 client
 │   ├── 📁 src
 │   │   ├── 📁 components       # React components
 │   │   └── 📄 App.tsx          # Main React application file
 │   ├── 📄 index.html           # HTML entry point
 │   └── 📄 package.json         # Frontend dependencies
-├── 📁 tests
-│   └── 📄 DLottery.test.ts     # Smart contract tests
-├── 📁 scripts
-│   └── 📄 deploy.ts            # Deployment script for the smart contract
-├── 📄 hardhat.config.ts        # Configuration file for Hardhat
 ├── 📄 README.md                # Documentation file
 └── 📄 .gitignore               # Files and folders to be ignored by Git
 ```
