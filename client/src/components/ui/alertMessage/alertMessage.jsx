@@ -16,7 +16,7 @@ export const AlertMessage = () => {
     <div className="flex items-center justify-center">
       <div className="bg-yellow-400/20  rounded-md mb-8 py-2 px-12 text-center">
         <p className="text-white">
-          <span className="mr-2">Alert !</span>Please install Wallet for viewing
+          <span className="mr-2 text-yellow-300">Alert !</span>Please install Wallet to view
           lottery
         </p>
         {metaMaskUrl ? (
