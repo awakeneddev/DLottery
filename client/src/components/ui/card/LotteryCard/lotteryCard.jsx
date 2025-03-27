@@ -1,43 +1,45 @@
 import { ethers } from "ethers";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { toast } from "react-toastify";
-import CONTRACT_ABI from "../../../../data/contracts.json";
+import { BlockChainContext } from "../../../../context/blockchainContext";
+import { IsConnectedContext } from "../../../../context/isConnectedContext";
 import LotteryCardFormation from "./LotteryCardFormation";
 export const LotteryCard = ({ lottery }) => {
+  const { isConnected } = useContext(IsConnectedContext);
+  const { provider, contractSigner } = useContext(BlockChainContext);
   const [isBuying, setIsBuying] = useState(false);
 
   const buyTicket = async (id) => {
+    if (!isConnected) {
+      toast.warning("Connect your wallet first");
+      return;
+    }
     setIsBuying(true);
-    try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = await provider.getSigner();
-      const contractAddress = import.meta.env.VITE_PROXY_ADDRESS;
-      const abi = CONTRACT_ABI;
 
-      const contract = new ethers.Contract(contractAddress, abi, signer);
+    if (contractSigner) {
+      try {
+        // getting user balance
+        const balance = await provider.getBalance(signer.address);
+        const ticketPrice = ethers.parseEther(lottery.ticketPrice.toString());
 
-      // getting user balance
-      const balance = await provider.getBalance(signer.address);
-      const ticketPrice = ethers.parseEther(lottery.ticketPrice.toString());
+        if (balance < ticketPrice) {
+          toast.error("Insufficient balance");
+          setIsBuying(false);
+          return;
+        }
 
-      if (balance < ticketPrice) {
-        toast.error("Insufficient balance");
+        const tx = await contractSigner.buyTicket(id, {
+          value: ethers.parseEther(lottery.ticketPrice.toString()),
+        });
+        toast.info("Transaction is in progress.");
+        await tx.wait();
+        toast.success(`Ticket has been bought for ${lottery.name}`);
+      } catch (err) {
+        toast.error("Transaction failed.");
+        console.log("buying transaction error : ", err);
+      } finally {
         setIsBuying(false);
-        return;
       }
-
-      const tx = await contract.buyTicket(id, {
-        value: ethers.parseEther(lottery.ticketPrice.toString()),
-      });
-      toast.info("Transaction is in progress.");
-      await tx.wait();
-      toast.success(`Ticket has been bought for ${lottery.name}`);
-      setIsBuying(false);
-    } catch (err) {
-      toast.error("Transaction failed.");
-      console.log("buying transaction error : ", err);
-      setIsBuying(false);
     }
   };
 
