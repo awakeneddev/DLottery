@@ -1,10 +1,11 @@
 import { ethers } from "ethers";
 import { Calendar, DollarSign, Loader, Plus, Ticket } from "lucide-react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import CONTRACT_ABI from "../../data/contracts.json";
+import { BlockChainContext } from "../../context/blockchainContext";
 const CreateLottery = () => {
+  const { contractSigner } = useContext(BlockChainContext);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -20,38 +21,34 @@ const CreateLottery = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = await provider.getSigner();
-      const contractAddress = import.meta.env.VITE_PROXY_ADDRESS;
-      const abi = CONTRACT_ABI;
-      const contract = new ethers.Contract(contractAddress, abi, signer);
+    if (contractSigner) {
+      try {
+        // converting prize amount into Wei (Since ethereum transaction use WEI);
+        const prizeAmountWei = ethers.parseEther(String(formData.totalPrize));
+        const ticketPriceWei = ethers.parseEther(String(formData.ticketPrice));
+        const endTime = Math.floor(new Date(formData.endTime).getTime() / 1000);
 
-      // converting prize amount into Wei (Since ethereum transaction use WEI);
-      const prizeAmountWei = ethers.parseEther(String(formData.totalPrize));
-      const ticketPriceWei = ethers.parseEther(String(formData.ticketPrice));
-      const endTime = Math.floor(new Date(formData.endTime).getTime() / 1000);
+        // calling create lottery function from that contract
+        const tx = await contractSigner.createLottery(
+          formData.name,
+          formData.description,
+          formData.maxTicket,
+          ticketPriceWei,
+          prizeAmountWei,
+          endTime
+        );
+        toast.info("Lottery transaction is in progress.");
+        // waiting for transaction to validate
+        await tx.wait();
 
-      // calling create lottery function from that contract
-      const tx = await contract.createLottery(
-        formData.name,
-        formData.description,
-        formData.maxTicket,
-        ticketPriceWei,
-        prizeAmountWei,
-        endTime
-      );
-
-      // waiting for transaction to validate
-      await tx.wait();
-
-      toast.success("Lottery Created Successfully");
-      navigate("/");
-      console.log(tx);
-      setIsLoading(false);
-    } catch (err) {
-      console.log(err);
+        toast.success("Lottery Created Successfully");
+        navigate("/");
+ 
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -62,9 +59,6 @@ const CreateLottery = () => {
       [name]: value,
     }));
   };
-
-  console.log("address : ",import.meta.env.VITE_PROXY_ADDRESS)
-  console.log(CONTRACT_ABI)
 
   return (
     <div className="min-h-screen bg-[#0f172a] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400/10 via-[#0f172a] to-[#0f172a]">
