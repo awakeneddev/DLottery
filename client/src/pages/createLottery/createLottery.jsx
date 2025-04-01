@@ -12,7 +12,7 @@ const CreateLottery = () => {
     name: "",
     description: "",
     ticketPrice: 0,
-    totalPrize: 10,
+    totalPrize: 0,
     endTime: "",
     maxTicket: 0,
   });

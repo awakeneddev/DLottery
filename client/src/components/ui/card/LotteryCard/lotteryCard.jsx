@@ -6,7 +6,7 @@ import { IsConnectedContext } from "../../../../context/isConnectedContext";
 import LotteryCardFormation from "./LotteryCardFormation";
 export const LotteryCard = ({ lottery }) => {
   const { isConnected } = useContext(IsConnectedContext);
-  const { provider, contractSigner } = useContext(BlockChainContext);
+  const { provider, contractSigner,signer } = useContext(BlockChainContext);
   const [isBuying, setIsBuying] = useState(false);
 
   const buyTicket = async (id) => {
@@ -21,7 +21,7 @@ export const LotteryCard = ({ lottery }) => {
         // getting user balance
         const balance = await provider.getBalance(signer.address);
         const ticketPrice = ethers.parseEther(lottery.ticketPrice.toString());
-
+console.log(balance)
         if (balance < ticketPrice) {
           toast.error("Insufficient balance");
           setIsBuying(false);
@@ -49,6 +49,7 @@ export const LotteryCard = ({ lottery }) => {
         name={lottery.name}
         description={lottery.description}
         isOpen={lottery.isOpen}
+        id={lottery.id}
       />
       <LotteryCardFormation.Details
         endTime={lottery.endTime}

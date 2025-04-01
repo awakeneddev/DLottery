@@ -8,7 +8,19 @@ const IsConnectedProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(() => {
     return localStorage.getItem("isConnected") === "true";
   });
+
+  const [isWalletNotFound, setIsWalletNotFound] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+
+  useEffect(() => {
+    if (!window.ethereum) {
+      toast.warning("Wallet not found. Please install MetaMask.");
+      setIsWalletNotFound(true);
+      return;
+    }else{
+      setIsWalletNotFound(false);
+    }
+  },[])
 
   useEffect(() => {
     if (isConnected) {
@@ -20,12 +32,6 @@ const IsConnectedProvider = ({ children }) => {
 
   const connectWallet = async () => {
     setIsConnecting(true);
-    if (!window.ethereum) {
-      setIsConnecting(false);
-      toast.error("Wallet not found. Please install MetaMask.");
-      return;
-    }
-
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
@@ -50,7 +56,7 @@ const IsConnectedProvider = ({ children }) => {
 
   return (
     <IsConnectedContext.Provider
-      value={{ isConnected, isConnecting, connectWallet, disconnectWallet }}
+      value={{ isConnected, isConnecting, connectWallet, disconnectWallet,isWalletNotFound }}
     >
       {children}
     </IsConnectedContext.Provider>

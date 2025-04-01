@@ -14,7 +14,6 @@ export const BlockChainContext = createContext();
 
 export const BlockChainProvider = ({ children }) => {
   const { isConnected } = useContext(IsConnectedContext);
-  const [isWalletNotFound, setIsWalletNotFound] = useState(false);
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [contractProvider, setContractProvider] = useState(null);
@@ -22,13 +21,9 @@ export const BlockChainProvider = ({ children }) => {
 
   // initializing blockchain
   const initBlockchain = useCallback(async () => {
-    if (!window.ethereum) {
-        setIsWalletNotFound(true)
-    } ;
-
+  
     try {
       const _provider = new ethers.BrowserProvider(window.ethereum);
-      setIsWalletNotFound(false);
       await _provider.send("eth_requestAccounts", []);
       const _signer = await _provider.getSigner();
       const contractAddress = import.meta.env.VITE_PROXY_ADDRESS;
@@ -54,7 +49,7 @@ export const BlockChainProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    initBlockchain();
+    if (isConnected) initBlockchain();
   }, [isConnected]);
 
   return (
@@ -64,7 +59,6 @@ export const BlockChainProvider = ({ children }) => {
         signer,
         contractProvider,
         contractSigner,
-        isWalletNotFound,
       }}
     >
       {children}
